@@ -1,9 +1,6 @@
 services:
   - type: web
-    name: portfolio-site
+    name: flask-portfolio
     env: python
-    buildCommand: ""
-    startCommand: gunicorn app:app
-    envVars:
-      - key: FLASK_ENV
-        value: production
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
