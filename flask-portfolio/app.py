@@ -1,47 +1,42 @@
-from flask import Flask, render_template, request
-import pickle
-import numpy as np
-import os
+from flask import Flask, render_template, request, redirect, url_for
+from main import main_blueprint  # Import your blueprint
 
 app = Flask(__name__)
 
-# Load your ML model (Titanic Survival Prediction)
-model_path = "titanic_model.pkl"
-if not os.path.exists(model_path):
-    raise FileNotFoundError(f"Model file '{model_path}' not found. Please ensure it exists in the directory.")
+# Register the blueprint
+app.register_blueprint(main_blueprint, url_prefix='/')
 
-model = pickle.load(open(model_path, "rb"))
-
-@app.route("/")
+@app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template('index.html')
 
-@app.route("/login")
-def login():
-    return "Login Page"  # Replace with your login page logic
-
-@app.route("/projects")
-def projects():
-    return render_template("projects.html")
-
-@app.route("/ml-demo", methods=["GET", "POST"])
+@app.route('/ml-demo', methods=['GET', 'POST'])
 def ml_demo():
-    prediction = None
-    if request.method == "POST":
-        # Example: collect input fields
-        age = float(request.form["age"])
-        fare = float(request.form["fare"])
-        sex = 1 if request.form["sex"] == "male" else 0
-        pclass = int(request.form["pclass"])
+    # ML demo logic yahan par
+    return render_template('ml_demo.html')
 
-        features = np.array([[pclass, sex, age, fare]])
-        prediction = model.predict(features)[0]
-
-    return render_template("ml_demo.html", prediction=prediction)
-
-@app.route("/contact")
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template("contact.html")
+    if request.method == 'POST':
+        return redirect(url_for('submit'))  # Redirect to the 'submit' endpoint after form submission
+    return render_template('contact.html')
 
-if __name__ == "__main__":
+@app.route('/submit', methods=['POST'])
+def submit():
+    name = request.form['name']
+    email = request.form['email']
+    message = request.form['message']
+    # Process the form data (e.g., save to database, send email, etc.)
+    print(f"Name: {name}, Email: {email}, Message: {message}")
+    return redirect(url_for('thank_you'))
+
+@app.route('/projects')
+def projects():
+    return render_template('projects.html')  # Ensure 'projects.html' exists in the templates folder
+
+@app.route('/thank-you')
+def thank_you():
+    return render_template('thank_you.html')  # Ensure this template exists
+
+if __name__ == '__main__':
     app.run(debug=True)
