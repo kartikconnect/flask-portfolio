@@ -14,8 +14,6 @@
         {% if 'user_id' in session %}
             <a href="{{ url_for('dashboard') }}">Dashboard</a>
             <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-            <a href="{{ url_for('login') }}">Login</a>
         {% endif %}
     </nav>
     

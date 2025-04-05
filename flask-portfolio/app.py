@@ -1,15 +1,27 @@
 from flask import Flask, render_template, request
 import pickle
 import numpy as np
+import os
 
 app = Flask(__name__)
 
 # Load your ML model (Titanic Survival Prediction)
-model = pickle.load(open("titanic_model.pkl", "rb"))
+model_path = "titanic_model.pkl"
+if not os.path.exists(model_path):
+    raise FileNotFoundError(f"Model file '{model_path}' not found. Please ensure it exists in the directory.")
 
+model = pickle.load(open(model_path, "rb"))
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/")
+def home():
+    return "Hello, Flask!"
+
+@app.route("/login")
+def login():
+    return "Login Page"  # Replace with your login page logic
 
 @app.route("/projects")
 def projects():
